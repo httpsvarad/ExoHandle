@@ -21,4 +21,15 @@ body {
   color: var(--foreground);
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
+  height: 100vh;
 }
+
+@font-face {
+  font-family: 'MyCus';
+  src: url('../lib/Mona-Sans.ttf') ;/* Ensures text is visible while font loads */
+}
+
+h1,h2,h3,h4,h5,p,span,button{
+  font-family: 'MyCus';
+}
+
