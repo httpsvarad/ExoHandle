@@ -45,7 +45,7 @@ export default function LandingPage({ onStart }: { onStart: () => void }) {
         
         Start Quiz
       </button>*/}
-      <TransitionLink href="/main" label="Get Started" />
+      <TransitionLink href="/dashboardins" label="Get Started" />
       <div className="absolute bottom-8 text-gray-400 text-sm animate-fade-in delay-500">
       Streamline your Institute with Exo!
       </div>
