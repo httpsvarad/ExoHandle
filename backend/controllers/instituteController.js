@@ -5,6 +5,7 @@ async function getAllInstitutes(req, res) {
   try {
     const institutes = await prisma.institute.findMany();
     res.status(200).json(institutes);
+    console.log("hey")
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Error retrieving institutes.' });
@@ -15,6 +16,7 @@ async function getInstituteById(req, res) {
   const id = parseInt(req.params.id, 10);
   try {
     const institute = await prisma.institute.findUnique({ where: { id } });
+   
     if (!institute) {
       return res.status(404).json({ error: 'Institute not found.' });
     }
@@ -26,10 +28,11 @@ async function getInstituteById(req, res) {
 }
 
 async function createInstitute(req, res) {
-  const { createdBy, access, noOfClassRooms, noOfStudents, noOfTeachers, noOfSemesters, noOfBenches } = req.body;
+  const { createdBy, noOfClassRooms, noOfStudents, noOfTeachers, noOfSemesters, noOfBenches } = req.body;
   try {
+    
     const newInstitute = await prisma.institute.create({
-      data: { createdBy, access, noOfClassRooms, noOfStudents, noOfTeachers, noOfSemesters, noOfBenches }
+      data: { createdBy, noOfClassRooms, noOfStudents, noOfTeachers, noOfSemesters, noOfBenches }
     });
     res.status(201).json(newInstitute);
   } catch (error) {

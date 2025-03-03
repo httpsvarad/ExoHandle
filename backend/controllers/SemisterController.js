@@ -37,6 +37,7 @@ async function getSemesterById(req, res) {
 async function createSemester(req, res) {
   const { instituteId, name } = req.body;
   try {
+    console.log("hey")
     const newSemester = await prisma.semester.create({
       data: { instituteId, name },
     });

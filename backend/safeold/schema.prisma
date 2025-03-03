@@ -1,0 +1,266 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                      Int                      @id @default(autoincrement())
+  email                   String                   @unique
+  role                    Role
+  availabilityStatus      AvailabilityStatus       @default(AVAILABLE)
+  batchTeachers           BatchTeacher[]
+  divisionTeachers        DivisionTeacher[]
+  examSeatingArrangements ExamSeatingArrangement?
+  examSessionTeachers     ExamSessionTeacher[]
+  examTeacherArrangements ExamTeacherArrangement[]
+  studentDivisions        StudentDivision[]
+  studentSemesters        StudentSemester[]
+}
+
+model Institute {
+  id             Int        @id @default(autoincrement())
+  createdBy      String     @db.Uuid
+  access         Json[]     @default([])
+  noOfClassRooms Int
+  noOfStudents   Int
+  noOfTeachers   Int
+  noOfSemesters  Int
+  noOfBenches    Int
+  semesters      Semester[]
+
+  @@map("institutes")
+}
+
+model Semester {
+  id               Int               @id @default(autoincrement())
+  instituteId      Int
+  name             String            @unique
+  divisions        Division[]
+  studentSemesters StudentSemester[]
+  institute        Institute         @relation(fields: [instituteId], references: [id])
+
+  @@map("semesters")
+}
+
+model Division {
+  id               Int               @id @default(autoincrement())
+  semesterId       Int
+  name             String
+  batches          Batch[]
+  semester         Semester          @relation(fields: [semesterId], references: [id])
+  divisionSubjects DivisionSubject[]
+  divisionTeachers DivisionTeacher[]
+  studentDivisions StudentDivision[]
+
+  @@unique([semesterId, name])
+}
+
+model Subject {
+  id               Int               @id @default(autoincrement())
+  name             String            @unique
+  type             SubjectType
+  batchTeachers    BatchTeacher[]
+  divisionSubjects DivisionSubject[]
+  divisionTeachers DivisionTeacher[]
+}
+
+model DivisionSubject {
+  id         Int      @id @default(autoincrement())
+  divisionId Int
+  subjectId  Int
+  division   Division @relation(fields: [divisionId], references: [id])
+  subject    Subject  @relation(fields: [subjectId], references: [id])
+
+  @@unique([divisionId, subjectId])
+}
+
+model Batch {
+  id               Int               @id @default(autoincrement())
+  divisionId       Int
+  name             String
+  division         Division          @relation(fields: [divisionId], references: [id])
+  batchTeachers    BatchTeacher[]
+  studentDivisions StudentDivision[]
+
+  @@unique([divisionId, name])
+}
+
+model DivisionTeacher {
+  id             Int                   @id @default(autoincrement())
+  divisionId     Int
+  subjectId      Int
+  teacherId      Int
+  assignmentType TeacherAssignmentType @default(THEORY)
+  division       Division              @relation(fields: [divisionId], references: [id])
+  subject        Subject               @relation(fields: [subjectId], references: [id])
+  teacher        User                  @relation(fields: [teacherId], references: [id])
+
+  @@unique([divisionId, subjectId])
+}
+
+model BatchTeacher {
+  id             Int                   @id @default(autoincrement())
+  batchId        Int
+  subjectId      Int
+  teacherId      Int
+  assignmentType TeacherAssignmentType @default(PRACTICAL)
+  batch          Batch                 @relation(fields: [batchId], references: [id])
+  subject        Subject               @relation(fields: [subjectId], references: [id])
+  teacher        User                  @relation(fields: [teacherId], references: [id])
+
+  @@unique([batchId, subjectId])
+}
+
+model StudentSemester {
+  id         Int                   @id @default(autoincrement())
+  studentId  Int
+  semesterId Int
+  status     StudentSemesterStatus @default(PENDING)
+  semester   Semester              @relation(fields: [semesterId], references: [id])
+  student    User                  @relation(fields: [studentId], references: [id])
+}
+
+model StudentDivision {
+  id         Int      @id @default(autoincrement())
+  studentId  Int
+  divisionId Int
+  batchId    Int?
+  batch      Batch?   @relation(fields: [batchId], references: [id])
+  division   Division @relation(fields: [divisionId], references: [id])
+  student    User     @relation(fields: [studentId], references: [id])
+}
+
+/// Classroom model
+model Classroom {
+  id           Int           @id @default(autoincrement())
+  name         String        @unique
+  floor        Int
+  capacity     Int
+  benches      Bench[]
+  examSessions ExamSession[]
+}
+
+model Bench {
+  id                      Int                      @id @default(autoincrement())
+  classroomId             Int
+  label                   String
+  maxSeats                Int
+  occupiedSeats           Int                      @default(0)
+  posX                    Int
+  posY                    Int
+  classroom               Classroom                @relation(fields: [classroomId], references: [id])
+  examSeatingArrangements ExamSeatingArrangement[]
+
+  @@unique([classroomId, label])
+}
+
+model ExamSeatingArrangement {
+  id            Int               @id @default(autoincrement())
+  examSessionId Int
+  benchId       Int
+  seatNumber    Int
+  studentId     Int               @unique
+  status        ArrangementStatus @default(DRAFT)
+  assignedAt    DateTime          @default(now())
+  bench         Bench             @relation(fields: [benchId], references: [id])
+  examSession   ExamSession       @relation(fields: [examSessionId], references: [id])
+  student       User              @relation(fields: [studentId], references: [id])
+
+  @@unique([benchId, seatNumber])
+}
+
+model Exam {
+  id           Int           @id @default(autoincrement())
+  name         String
+  examDate     DateTime
+  description  String?
+  createdAt    DateTime      @default(now())
+  examSessions ExamSession[]
+}
+
+model ExamSession {
+  id                      Int                      @id @default(autoincrement())
+  examId                  Int
+  classroomId             Int
+  sessionStart            DateTime
+  sessionEnd              DateTime
+  description             String?
+  examSeatingArrangements ExamSeatingArrangement[]
+  classroom               Classroom                @relation(fields: [classroomId], references: [id])
+  exam                    Exam                     @relation(fields: [examId], references: [id])
+  examSessionTeachers     ExamSessionTeacher[]
+  examTeacherArrangements ExamTeacherArrangement[]
+}
+
+model ExamSessionTeacher {
+  id            Int             @id @default(autoincrement())
+  examSessionId Int
+  teacherId     Int
+  role          TeacherExamRole @default(INVIGILATOR)
+  examSession   ExamSession     @relation(fields: [examSessionId], references: [id])
+  teacher       User            @relation(fields: [teacherId], references: [id])
+
+  @@unique([examSessionId, teacherId])
+}
+
+model ExamTeacherArrangement {
+  id            Int               @id @default(autoincrement())
+  examSessionId Int
+  teacherId     Int
+  posX          Int
+  posY          Int
+  status        ArrangementStatus @default(DRAFT)
+  assignedAt    DateTime          @default(now())
+  examSession   ExamSession       @relation(fields: [examSessionId], references: [id])
+  teacher       User              @relation(fields: [teacherId], references: [id])
+
+  @@unique([examSessionId, teacherId])
+}
+
+model Demo {
+  id Int @id @default(autoincrement())
+
+  @@map("demo")
+}
+
+enum Role {
+  ADMIN
+  TEACHER
+  STUDENT
+}
+
+enum AvailabilityStatus {
+  AVAILABLE
+  UNAVAILABLE
+}
+
+enum SubjectType {
+  THEORY
+  PRACTICAL
+  BOTH
+}
+
+enum TeacherAssignmentType {
+  THEORY
+  PRACTICAL
+}
+
+enum StudentSemesterStatus {
+  PENDING
+  APPROVED
+}
+
+enum ArrangementStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum TeacherExamRole {
+  INVIGILATOR
+  SUPERVISOR
+  OTHER
+}
