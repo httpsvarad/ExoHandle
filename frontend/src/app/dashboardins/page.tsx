@@ -5,6 +5,9 @@ import { IoMdCheckmark } from "react-icons/io";
 import { BsPeople } from "react-icons/bs";
 import { PiExamLight } from "react-icons/pi";
 import { GrScorecard } from "react-icons/gr";
+import { IoIosArrowForward } from "react-icons/io";
+import { PiChalkboardTeacher } from "react-icons/pi";
+import { SiGoogleclassroom } from "react-icons/si";
 function page() {
   return (
     <div className='h-full w-full justify-center items-center '>
@@ -44,30 +47,30 @@ function page() {
              </div>
 
           </div>
-          <h4>Seating Arrangements</h4>
+          <h4>Institute Classrooms</h4>
 
           <div className='w-full h-14 flex overflow-hidden'>
             <div className='h-full w-[5%] rounded-md bg-[#ebebf0] flex justify-center items-center'>
-            <GrScorecard className='dashicon '/>
+            <SiGoogleclassroom className='dashicon '/>
             </div>
             <div className='w-[90%] h-full overflow-hidden flex flex-col gap-1/2 py-1 px-3 justify-center '>
-               <h3 className='font-semibold text-base'>Seating Arrangement</h3>
+               <h3 className='font-semibold text-base'> Available Classrooms</h3>
                <p className='text-base '>12th-Augest-2025</p>
             </div>
-            <IoMdCheckmark className='dashicon mb-2 mt-2'/>
+            <IoIosArrowForward className='dashicon  mt-2'/>
           </div>
            
           <h4>Teachers List</h4>
 
           <div className='w-full h-14 flex overflow-hidden'>
             <div className='h-full w-[5%] rounded-md bg-[#ebebf0] flex justify-center items-center'>
-            <BsPeople className='dashicon '/>
+            < PiChalkboardTeacher className='dashicon '/>
             </div>
             <div className='w-[90%] h-full overflow-hidden flex flex-col gap-1/2 py-1 px-3 justify-center '>
                <h3 className='font-semibold text-base'>Teachers List</h3>
                <p className='text-base '>12th-Augest-2025</p>
             </div>
-            <IoMdCheckmark className='dashicon mb-2 mt-2 '/>
+            <IoIosArrowForward className='dashicon  mt-2'/>
           </div>
           
           <h4>Students List</h4>
@@ -80,7 +83,7 @@ function page() {
                <h3 className='font-semibold text-base'>Students List</h3>
                <p className='text-base '>12th-Augest-2025</p>
             </div>
-            <IoMdCheckmark className='dashicon mb-2 mt-2'/>
+            <IoIosArrowForward className='dashicon  mt-2'/>
           </div>
 
       </div>
