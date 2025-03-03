@@ -6,12 +6,17 @@ const semisterRoutes = require('./semisterRouter');
 const devisionRoutes = require('./divisionRouter');
 const classrooms = require('../controllers/classrooms');
 const benches = require('./benches');
+const {login} = require('../controllers/UserAuthController');
 const exam = require('./examRouter');
+const {sendOtp} = require('../controllers/otpverify');
 //setup test routes
 
+router.post('/auth',login)
+router.post('/sendotp',sendOtp)
 
 router.use('/division',devisionRoutes)
 router.get('/user', userController.createUser)
+
 
 router.use('/institute',instituteRoutes)
 router.use('/semister',semisterRoutes)

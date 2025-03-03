@@ -1,54 +1,46 @@
-// src/app/signin/page.tsx
-"use client"
-import { getProviders, signIn ,useSession} from 'next-auth/react';
-import { useEffect, useState ,useLayoutEffect} from 'react';
-import { useRouter } from 'next/navigation';
+import React from "react";
+import { Header } from "../header";
+import { FaUsers, FaCheckCircle } from "react-icons/fa";
+import { MdWeb } from "react-icons/md";
+import Loginf from "./loginform";  // Import your actual component
 
-type Provider = {
-  id: string;
-  name: string;
-};
-
-export default function SignInPage() {
-  const router = useRouter();
-  const [providers, setProviders] = useState<Record<string, Provider> | null>(null);
-  const { data: session } = useSession();
-  useEffect(() => {
-    const fetchProviders = async () => {
-      const response = await getProviders();
-      setProviders(response);
-    };
-
-    fetchProviders();
-  }, []);
-  useEffect(() => {
-    console.log(session);
-    if (session) {
-      router.push('/dashboard'); // Change '/desired-page' to the page you want to redirect to
-    }
-  }, [session, router]);
-
+function LandingPage() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">Sign In</h1>
+    <div className="h-[100%] w-full">
+      <Header />
+      <div className="h-[100vh] w-full px-[10vw] py-10 flex gap-10 items-center">
+        {/* Left Section - Attract Users */}
+        <div className="w-1/2 flex flex-col gap-6 justify-center">
+          <h2 className="text-5xl font-bold">Welcome to Our Platform</h2>
+          <p className="text-lg text-gray-600">
+            Experience the best features for managing education, tracking progress, and much more!
+          </p>
 
-      {providers &&
-        Object.values(providers).map((provider) => (
-          <div key={provider.id} className="mb-4">
-            {provider.name === 'Google' && (
-              <button
-                onClick={() => signIn(provider.id)}
-                className="px-6 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 transition"
-              >
-                Sign in with {provider.name}
-              </button>
-            )}
+          <div className="flex items-center gap-3">
+            <FaUsers className="text-blue-500 text-3xl" />
+            <p className="text-lg">Join a community of passionate learners.</p>
           </div>
-        ))}
 
-      <p className="mt-4 text-sm text-gray-600">
-        Don’t have an account? Just sign in, and we’ll create one for you!
-      </p>
+          <div className="flex items-center gap-3">
+            <MdWeb className="text-green-500 text-3xl" />
+            <p className="text-lg">Interactive dashboards and seamless experience.</p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <FaCheckCircle className="text-yellow-500 text-3xl" />
+            <p className="text-lg">Trusted by institutions and educators worldwide.</p>
+          </div>
+
+         
+        </div>
+
+        {/* Right Section - Your Component */}
+        <div className="w-1/2 border-l-2 border-gray-300 pl-10">
+          <Loginf />
+        </div>
+      </div>
     </div>
   );
 }
+
+export default LandingPage;
