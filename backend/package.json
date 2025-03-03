@@ -8,6 +8,7 @@
   "dependencies": {
     "@neondatabase/serverless": "^0.10.4",
     "@prisma/client": "^6.4.1",
+    "backend": "file:",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.40.0",
     "express": "^4.21.2",
