@@ -19,7 +19,31 @@ model User {
   examTeacherArrangements ExamTeacherArrangement[]
   studentDivisions        StudentDivision[]
   studentSemesters        StudentSemester[]
+  notifications           Notification[]  
+
 }
+
+model Notification {
+   id          String   @id @default(uuid())
+  userId      Int      // 🔥 FIX: Changed from String @db.Uuid to match User.id
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type        NotificationType
+  message     String
+  link        String?  // Optional link to redirect the user
+  read        Boolean  @default(false) // Whether the user has read it
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+
+enum NotificationType {
+  SYSTEM    // General system notifications
+  EMAIL     // Email-based notifications
+  PUSH      // Push notifications for mobile
+  SMS       // SMS-based notifications
+  REMINDER  // Appointment or event reminders
+}
+
 
 model Institute {
   id             Int        @id @default(autoincrement())
@@ -37,14 +61,21 @@ model Institute {
 
 model Semester {
   id               Int               @id @default(autoincrement())
-  instituteId      Int
+  instituteId      Int 
   name             String            @unique
+  createdAt        DateTime          @default(now()) // Stores the date of creation
+  department       String            // Stores department name
+  access           String[]    
   divisions        Division[]
+
   studentSemesters StudentSemester[]
   institute        Institute         @relation(fields: [instituteId], references: [id])
+  // chat         Chat?     @relation(fields: [id], references: [semesterId]) // One chat per semester
 
   @@map("semesters")
 }
+
+
 
 model Division {
   id               Int               @id @default(autoincrement())
@@ -133,6 +164,8 @@ model StudentDivision {
   division   Division @relation(fields: [divisionId], references: [id])
   student    User     @relation(fields: [studentId], references: [id])
 }
+
+
 
 /// Classroom model
 model Classroom {
