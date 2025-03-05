@@ -8,7 +8,7 @@ export default function SidebarWrapper({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const showSidebar = pathname !== "/"; // Hide sidebar on home page
+  const showSidebar = pathname !== "/" && pathname !== "/auth";
 
   return (
     <div className="flex w-full">
