@@ -1,6 +1,6 @@
 const express = require("express")
 const router = express.Router();
-const userController = require("../controllers/userController")
+const userController = require("./userRouter");
 const instituteRoutes = require('./instRouter');
 const semisterRoutes = require('./semisterRouter');
 const devisionRoutes = require('./divisionRouter');
@@ -21,11 +21,11 @@ router.post('/auth',login)
 router.post('/sendotp',sendOtp)
 
 router.use('/division',devisionRoutes)
-router.get('/user', userController.createUser)
 
 
-router.post("/assign-seating", assignSeating);
 
+// router.post("/assign-seating", assignSeating);
+router.use('/user', userController)
 router.use('/institute',instituteRoutes)
 router.use('/semister',semisterRoutes)
 router.use('/room',classrooms)

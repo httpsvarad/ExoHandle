@@ -5,6 +5,20 @@ const prisma = new PrismaClient();
 exports.createExamSession = async (req, res) => {
   try {
     const { examId, classroomId, sessionStart, sessionEnd, description } = req.body;
+
+    // Check if examId exists
+    const exam = await prisma.exam.findUnique({ where: { id: examId } });
+    if (!exam) {
+      return res.status(400).json({ error: "Invalid examId. Exam does not exist." });
+    }
+
+    // Check if classroomId exists
+    const classroom = await prisma.classroom.findUnique({ where: { id: classroomId } });
+    if (!classroom) {
+      return res.status(400).json({ error: "Invalid classroomId. Classroom does not exist." });
+    }
+
+    // Proceed with exam session creation
     const newExamSession = await prisma.examSession.create({
       data: {
         examId,
@@ -14,12 +28,14 @@ exports.createExamSession = async (req, res) => {
         description,
       },
     });
+
     res.status(201).json(newExamSession);
   } catch (error) {
     console.error("Error creating exam session:", error);
     res.status(500).json({ error: "Failed to create exam session" });
   }
 };
+
 
 // ✅ Get All Exam Sessions
 exports.getAllExamSessions = async (req, res) => {
