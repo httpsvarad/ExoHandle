@@ -16,7 +16,7 @@ const Sidebar = () => {
   ];
 
   return (
-    <aside className="w-64 bg-[#1E1E2E] text-white flex flex-col items-center py-6 h-screen shadow-lg">
+    <aside className="w-64 bg-[#1E1E2E] text-white flex flex-col items-center py-6 h-screen shadow-lg fixed">
       {/* Sidebar Title */}
       <h2 className="text-2xl font-semibold tracking-wide mb-10">ExoHandle</h2>
 
