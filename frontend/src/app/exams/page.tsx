@@ -17,7 +17,7 @@ export default function ExamsPage() {
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-semibold">Exams</h2>
         <Link href="/exams/new">
-          <button className="bg-blue-600 text-white px-4 py-2 rounded-md">
+          <button className="bg-green-600 text-white px-4 py-2 rounded-md">
             Create Exam
           </button>
         </Link>
