@@ -15,6 +15,8 @@ const examsession = require('./examSessionRouter');
 const examSessionTeacher = require('./examSessionTeacherRouter');
 const examTeacherArrangement = require('./examTeacherArrangementRouter');
 const { assignSeating } = require("../controllers/seatingarrange"); 
+const setupRoutes = require('./setupRouter')
+const classroomRoutes = require('./classroomRoutes')
 //setup test routes
 
 router.post('/auth',login)
@@ -36,7 +38,8 @@ router.use('/batch',batch)
 router.use('/examsession', examsession)
 router.use('/examsessionteacher', examSessionTeacher)
 router.use('/examteacherarrangement', examTeacherArrangement)
-
+router.use('/setup', setupRoutes)
+router.use('/classroom', classroomRoutes)
 
 router.get('/', (req,res)=> {
   res.send("HELLO WORLD!")

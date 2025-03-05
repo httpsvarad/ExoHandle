@@ -20,7 +20,7 @@ model User {
   studentDivisions        StudentDivision[]
   studentSemesters        StudentSemester[]
   notifications           Notification[]  
-
+  institute               Institute[]
 }
 
 model Notification {
@@ -47,7 +47,7 @@ enum NotificationType {
 
 model Institute {
   id             Int        @id @default(autoincrement())
-  createdBy      String     @db.Uuid
+  createdBy      Int     
   access         Json[]     @default([])
   noOfClassRooms Int
   noOfStudents   Int
@@ -55,14 +55,14 @@ model Institute {
   noOfSemesters  Int
   noOfBenches    Int
   semesters      Semester[]
-
+  user        User                  @relation(fields: [createdBy], references: [id])
   @@map("institutes")
 }
 
 model Semester {
   id               Int               @id @default(autoincrement())
   instituteId      Int 
-  name             String            @unique
+  name             String           
   createdAt        DateTime          @default(now()) // Stores the date of creation
   department       String            // Stores department name
   access           String[]    
@@ -116,8 +116,6 @@ model Batch {
   division         Division          @relation(fields: [divisionId], references: [id])
   batchTeachers    BatchTeacher[]
   studentDivisions StudentDivision[]
-
-  @@unique([divisionId, name])
 }
 
 model DivisionTeacher {
