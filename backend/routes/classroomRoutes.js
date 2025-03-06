@@ -3,6 +3,13 @@ const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
 const router = express.Router();
+const {
+  addBench,
+  removeBench,
+  editBench,
+  changeBenchPosition,
+  getBenchesByClassroom
+} = require("../controllers/classroomAll");
 
 // ✅ Create a Classroom
 router.post("/", async (req, res) => {
@@ -68,5 +75,12 @@ router.delete("/:id", async (req, res) => {
     res.status(500).json({ error: "Error deleting classroom" });
   }
 });
+
+//benches and clasrooms 
+router.get("/bench/:classroomId", getBenchesByClassroom);
+router.post("/addbench", addBench);
+router.delete("/removebench/:benchId", removeBench);
+router.put("/editbench/:benchId", editBench);
+router.put("/change-position-bench/:benchId", changeBenchPosition);
 
 module.exports = router;

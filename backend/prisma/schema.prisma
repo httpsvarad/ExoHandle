@@ -107,6 +107,7 @@ model ExamSeatingArrangement {
   seatNumber    Int
   studentId     Int               @unique
   status        ArrangementStatus @default(DRAFT)
+  attendance    Int               @default(0)
   assignedAt    DateTime          @default(now())
   Bench         Bench             @relation(fields: [benchId], references: [id])
   ExamSession   ExamSession       @relation(fields: [examSessionId], references: [id])
@@ -148,6 +149,7 @@ model ExamTeacherArrangement {
   posY          Int
   status        ArrangementStatus @default(DRAFT)
   assignedAt    DateTime          @default(now())
+  attendance    Int               @default(0)
   ExamSession   ExamSession       @relation(fields: [examSessionId], references: [id])
   User          User              @relation(fields: [teacherId], references: [id])
 

@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = "postgresql://postgres:zOEeFkAUnvCtdEgGPRgenkjTupkAFkxH@trolley.proxy.rlwy.net:48733/railway"
 }
 
 model User {
@@ -17,92 +17,77 @@ model User {
   examSeatingArrangements ExamSeatingArrangement?
   examSessionTeachers     ExamSessionTeacher[]
   examTeacherArrangements ExamTeacherArrangement[]
+  notifications           Notification[]
   studentDivisions        StudentDivision[]
   studentSemesters        StudentSemester[]
-  notifications           Notification[]  
+  testmarks               TestMarks[]
   institute               Institute[]
   message                 Message[]
-  testmarks               TestMarks[]
 }
 
 model Notification {
-   id          String   @id @default(uuid())
-  userId      Int      // 🔥 FIX: Changed from String @db.Uuid to match User.id
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  type        NotificationType
-  message     String
-  link        String?  // Optional link to redirect the user
-  read        Boolean  @default(false) // Whether the user has read it
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String           @id @default(uuid())
+  userId    Int
+  type      NotificationType
+  message   String
+  link      String?
+  read      Boolean          @default(false)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
-
-
-enum NotificationType {
-  SYSTEM    // General system notifications
-  EMAIL     // Email-based notifications
-  PUSH      // Push notifications for mobile
-  SMS       // SMS-based notifications
-  REMINDER  // Appointment or event reminders
-}
-
 
 model Institute {
-  id             Int        @id @default(autoincrement())
-  createdBy      Int     
-  access         Json[]     @default([])
+  id             Int         @id @default(autoincrement())
+  createdBy      Int
+  access         Json[]      @default([])
   noOfClassRooms Int
   noOfStudents   Int
   noOfTeachers   Int
   noOfSemesters  Int
   noOfBenches    Int
+  classrooms     Classroom[]
+  user           User        @relation(fields: [createdBy], references: [id])
   semesters      Semester[]
-  exams          Exam[]
-  user           User                  @relation(fields: [createdBy], references: [id])
+
   @@map("institutes")
 }
 
 model Semester {
   id               Int               @id @default(autoincrement())
-  instituteId      Int 
-  name             String           
-  createdAt        DateTime          @default(now()) // Stores the date of creation
-  department       String            // Stores department name
-  access           String[]    
+  instituteId      Int
+  name             String
+  createdAt        DateTime          @default(now())
+  department       String
+  access           String[]
   divisions        Division[]
-
   studentSemesters StudentSemester[]
+  chat             Chat?
   institute        Institute         @relation(fields: [instituteId], references: [id])
-  // chat         Chat?     @relation(fields: [id], references: [semesterId]) // One chat per semester
-  chat             Chat[] 
 
   @@map("semesters")
 }
 
 model Chat {
-  id          Int        @id @default(autoincrement())
-  semesterId  Int        @unique // Each semester has one chat
-  messages    Message[]
-  semester    Semester   @relation(fields: [semesterId], references: [id])
+  id         Int       @id @default(autoincrement())
+  semesterId Int       @unique
+  semester   Semester  @relation(fields: [semesterId], references: [id])
+  messages   Message[]
 
   @@map("chats")
 }
 
 model Message {
-  id         Int       @id @default(autoincrement())
-  chatId     Int
-  senderId   Int
-  content    String
-  createdAt  DateTime  @default(now())
-
-  chat       Chat      @relation(fields: [chatId], references: [id])
-  sender     User      @relation(fields: [senderId], references: [id])
+  id        Int      @id @default(autoincrement())
+  chatId    Int
+  senderId  Int
+  content   String
+  createdAt DateTime @default(now())
+  chat      Chat     @relation(fields: [chatId], references: [id])
+  sender    User     @relation(fields: [senderId], references: [id])
 
   @@map("messages")
 }
-
-
-
 
 model Division {
   id               Int               @id @default(autoincrement())
@@ -113,35 +98,33 @@ model Division {
   divisionSubjects DivisionSubject[]
   divisionTeachers DivisionTeacher[]
   studentDivisions StudentDivision[]
-  tests            TestTable[]
-  @@unique([semesterId, name])
+  tests            TestTable?
 }
 
 model TestTable {
-  id         Int       @id @default(autoincrement())
-  divisionId Int       @unique // Each division has one text table
-  testscore    String    // Store formatted text
-  updatedAt  DateTime  @updatedAt
-
-  division   Division  @relation(fields: [divisionId], references: [id])
+  id         Int         @id @default(autoincrement())
+  divisionId Int         @unique
+  testscore  String
+  updatedAt  DateTime    @updatedAt
   testmarks  TestMarks[]
+  division   Division    @relation(fields: [divisionId], references: [id])
+
   @@map("text_tables")
 }
 
 model TestMarks {
-  id          Int       @id @default(autoincrement())
-  studentId   Int
-  subjectId   Int
-  testId      Int
-  obtained    Float
-  total       Float
-  createdAt   DateTime  @default(now())
+  id        Int       @id @default(autoincrement())
+  studentId Int
+  subjectId Int
+  testId    Int
+  obtained  Float
+  total     Float
+  createdAt DateTime  @default(now())
+  student   User      @relation(fields: [studentId], references: [id])
+  subject   Subject   @relation(fields: [subjectId], references: [id])
+  test      TestTable @relation(fields: [testId], references: [id])
 
-  student     User   @relation(fields: [studentId], references: [id])
-  subject     Subject   @relation(fields: [subjectId], references: [id])
-  test        TestTable      @relation(fields: [testId], references: [id])
-
-  @@unique([studentId, subjectId, testId]) // One entry per student per test
+  @@unique([studentId, subjectId, testId])
 }
 
 model Subject {
@@ -218,15 +201,15 @@ model StudentDivision {
   student    User     @relation(fields: [studentId], references: [id])
 }
 
-
-
 /// Classroom model
 model Classroom {
   id           Int           @id @default(autoincrement())
   name         String        @unique
   floor        Int
   capacity     Int
+  instituteId  Int
   benches      Bench[]
+  institute    Institute     @relation(fields: [instituteId], references: [id])
   examSessions ExamSession[]
 }
 
@@ -251,6 +234,7 @@ model ExamSeatingArrangement {
   seatNumber    Int
   studentId     Int               @unique
   status        ArrangementStatus @default(DRAFT)
+  attendance    Int               @default(0)
   assignedAt    DateTime          @default(now())
   bench         Bench             @relation(fields: [benchId], references: [id])
   examSession   ExamSession       @relation(fields: [examSessionId], references: [id])
@@ -262,12 +246,10 @@ model ExamSeatingArrangement {
 model Exam {
   id           Int           @id @default(autoincrement())
   name         String
-  instituteId      Int 
   examDate     DateTime
   description  String?
   createdAt    DateTime      @default(now())
   examSessions ExamSession[]
-  institute    Institute         @relation(fields: [instituteId], references: [id])
 }
 
 model ExamSession {
@@ -302,6 +284,7 @@ model ExamTeacherArrangement {
   posX          Int
   posY          Int
   status        ArrangementStatus @default(DRAFT)
+  attendance    Int               @default(0)
   assignedAt    DateTime          @default(now())
   examSession   ExamSession       @relation(fields: [examSessionId], references: [id])
   teacher       User              @relation(fields: [teacherId], references: [id])
@@ -313,6 +296,14 @@ model Demo {
   id Int @id @default(autoincrement())
 
   @@map("demo")
+}
+
+enum NotificationType {
+  SYSTEM
+  EMAIL
+  PUSH
+  SMS
+  REMINDER
 }
 
 enum Role {
