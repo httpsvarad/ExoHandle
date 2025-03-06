@@ -1,6 +1,7 @@
 const express = require('express');
 const router = require("./routes/router");
 const app = express();
+const cookieParser = require("cookie-parser");
 const { config } = require("dotenv");
 config();
 
@@ -11,7 +12,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 // app.use('/api', require('./router-api'))
 //(aoi routw wont use any of tye session data etc. etc. written below)
-
+app.use(cookieParser());
 app.use(express.static("public"));
 
 

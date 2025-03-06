@@ -227,15 +227,41 @@ model User {
   StudentSemester        StudentSemester[]
   TestMarks              TestMarks[]
   institutes             institutes[]
-  messages               messages[]
+  messages               Message[]
+  groupChats             GroupChatUser[]  
+  createdGroupChats      GroupChat[] @relation("CreatedGroupChats") // ✅ Add this line
+  semester               Int?
 }
 
-model chats {
-  id         Int        @id @default(autoincrement())
-  semesterId Int        @unique
-  semesters  semesters  @relation(fields: [semesterId], references: [id])
-  messages   messages[]
+model GroupChat {
+  id         Int       @id @default(autoincrement())
+  name       String
+  semester   Int
+  users      GroupChatUser[]  
+  messages   Message[]
+  createdBy  User      @relation("CreatedGroupChats", fields: [createdById], references: [id]) // ✅ Explicit relation
+  createdById Int
 }
+
+model GroupChatUser {
+  userId     Int
+  groupChatId Int
+  user       User      @relation(fields: [userId], references: [id])
+  groupChat  GroupChat @relation(fields: [groupChatId], references: [id])
+
+  @@id([userId, groupChatId]) 
+}
+
+model Message {
+  id         Int      @id @default(autoincrement())
+  sender     User     @relation(fields: [senderId], references: [id])
+  senderId   Int
+  groupChat  GroupChat @relation(fields: [groupChatId], references: [id])
+  groupChatId Int
+  content    String
+  createdAt  DateTime @default(now())
+}
+
 
 model demo {
   id Int @id @default(autoincrement())
@@ -256,15 +282,6 @@ model institutes {
   semesters      semesters[]
 }
 
-model messages {
-  id        Int      @id @default(autoincrement())
-  chatId    Int
-  senderId  Int
-  content   String
-  createdAt DateTime @default(now())
-  chats     chats    @relation(fields: [chatId], references: [id])
-  User      User     @relation(fields: [senderId], references: [id])
-}
 
 model semesters {
   id              Int               @id @default(autoincrement())
@@ -275,7 +292,7 @@ model semesters {
   access          String[]
   Division        Division[]
   StudentSemester StudentSemester[]
-  chats           chats?
+  
   institutes      institutes        @relation(fields: [instituteId], references: [id])
 }
 

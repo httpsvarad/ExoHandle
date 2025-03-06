@@ -1,5 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const generateTokenAndSetCookie = require('../utils/generateTokenAndSetCookie');
 
 exports.login = async (req, res) => {
   try {
@@ -19,9 +20,12 @@ exports.login = async (req, res) => {
       user = await prisma.user.create({
         data: {
           email ,
-          role:'STUDENT'// Set default availability
+          role:'TEACHER', // Set default availability
+          // semester: 3 // Set default semester
         }
       });
+
+      await generateTokenAndSetCookie(res, user.id);
 
       res.status(201).json({ message: "User Created!", result: user });
     }
