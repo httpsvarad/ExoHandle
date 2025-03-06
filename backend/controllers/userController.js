@@ -73,7 +73,7 @@ const prisma = new PrismaClient();
 // ✅ Create User
 exports.createUser = async (req, res) => {
   try {
-    const { email, role, availabilityStatus } = req.body;
+    const { email, role, availabilityStatus, semester } = req.body;
 
     // Check if email already exists
     const existingUser = await prisma.user.findUnique({ where: { email } });
@@ -84,6 +84,7 @@ exports.createUser = async (req, res) => {
         email,
         role,
         availabilityStatus,
+        semester,
       },
     });
 

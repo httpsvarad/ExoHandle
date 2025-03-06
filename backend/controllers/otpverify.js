@@ -21,7 +21,7 @@ exports.sendOtp = async (req, res) => {
   const mailOptions = {
     from: 'santoshallu1234@gmail.com',
     to: email,
-    subject: 'Your CoderHabit OTP Code',
+    subject: 'Your Exohandle OTP Code',
     text: `Dear user,\n\nYour OTP for CoderHabit is: ${otp}\n\nThank you,\nThe CoderHabit Team`,
   };
 

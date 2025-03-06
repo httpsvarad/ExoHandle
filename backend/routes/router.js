@@ -18,6 +18,7 @@ const { assignSeating } = require("../controllers/seatingarrange");
 const setupRoutes = require('./setupRouter')
 const classroomRoutes = require('./classroomRoutes')
 const DivAssign = require('./divisionNeeds')
+const grpchat = require('./groupChatRouter')
 const TestRoutes =require('./textAll')
 const firewallRoutes = require("./firewallRoutes");
 //setup test routes
@@ -49,6 +50,7 @@ router.use('/examsessionteacher', examSessionTeacher)
 router.use('/examteacherarrangement', examTeacherArrangement)
 router.use('/setup', setupRoutes)
 router.use('/classroom', classroomRoutes)
+router.use('/grpchat', grpchat)
 
 router.get('/', (req,res)=> {
   res.send("HELLO WORLD!")
