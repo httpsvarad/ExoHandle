@@ -52,25 +52,25 @@ const ManageBatches = () => {
   ];
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex min-h-screen bg-gray-50">
       {/* Main Content */}
-      <div className="flex-1 p-10">
-        <h1 className="text-4xl font-bold text-[#2c275d]">Batches</h1>
-        <p className="text-gray-600 mt-2">Manage student batches</p>
+      <div className="flex-1 px-10 py-8">
+        <h1 className="text-3xl font-semibold text-[#2c275d]">Batches</h1>
+        <p className="text-gray-600 mt-2">Manage student batches easily.</p>
 
         {/* Search Bar */}
-        <div className="mt-4">
+        <div className="mt-6">
           <input
             type="text"
             placeholder="Find a batch"
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#009c98] focus:outline-none"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#009c98] focus:outline-none"
           />
         </div>
 
         {/* Batches Table */}
-        <div className="mt-6 bg-white rounded-lg shadow overflow-hidden">
+        <div className="mt-8 bg-white rounded-lg shadow-lg overflow-hidden">
           <table className="w-full border-collapse">
-            <thead className="bg-[#2c275d] text-white">
+            <thead className="bg-[#2c275d] text-white text-lg">
               <tr>
                 <th className="p-4 text-left">Batch</th>
                 <th className="p-4 text-left">Start Date</th>
@@ -82,22 +82,25 @@ const ManageBatches = () => {
             </thead>
             <tbody>
               {batches.map((batch, index) => (
-                <tr key={index} className="border-t">
-                  <td className="p-4">{batch.name}</td>
-                  <td className="p-4 text-[#009c98] font-medium">
+                <tr
+                  key={index}
+                  className="border-t hover:bg-gray-100 transition duration-200"
+                >
+                  <td className="p-4 text-lg">{batch.name}</td>
+                  <td className="p-4 text-[#009c98] font-medium text-lg">
                     {batch.start}
                   </td>
-                  <td className="p-4 text-[#009c98] font-medium">
+                  <td className="p-4 text-[#009c98] font-medium text-lg">
                     {batch.end}
                   </td>
-                  <td className="p-4">{batch.students}</td>
+                  <td className="p-4 text-lg">{batch.students}</td>
                   <td className="p-4">
-                    <span className="bg-[#009c98] text-white px-3 py-1 rounded-md">
+                    <span className="bg-[#009c98] text-white px-3 py-1 rounded-md text-lg">
                       {batch.status}
                     </span>
                   </td>
                   <td className="p-4">
-                    <button className="text-[#009c98] hover:underline">
+                    <button className="text-[#009c98] hover:underline text-lg">
                       Manage
                     </button>
                   </td>
