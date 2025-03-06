@@ -17,6 +17,7 @@ const examTeacherArrangement = require('./examTeacherArrangementRouter');
 const { assignSeating } = require("../controllers/seatingarrange"); 
 const setupRoutes = require('./setupRouter')
 const classroomRoutes = require('./classroomRoutes')
+const DivAssign = require('./divisionNeeds')
 //setup test routes
 
 router.post('/auth',login)
@@ -24,7 +25,8 @@ router.post('/sendotp',sendOtp)
 
 router.use('/division',devisionRoutes)
 
-
+//router to assign subjects ,teachers, students to division
+router.use('/divassgin',DivAssign)
 
 // router.post("/assign-seating", assignSeating);
 router.use('/user', userController)
