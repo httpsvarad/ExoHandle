@@ -78,7 +78,7 @@
 
 import { useState } from "react";
 import { Edit, Trash, Eye } from "lucide-react";
-
+import SidebarWrapper from "../sidebarWrapper";
 export default function StudentsPage() {
   const [search, setSearch] = useState("");
   const [students, setStudents] = useState([
@@ -110,7 +110,9 @@ export default function StudentsPage() {
   };
 
   return (
-    <div className="p-6 space-y-4">
+    <><SidebarWrapper>
+      
+      <div className="p-6 space-y-4">
       <h1 className="text-2xl font-bold">Students</h1>
 
       {/* Search Bar */}
@@ -197,5 +199,7 @@ export default function StudentsPage() {
         </table>
       </div>
     </div>
+      </SidebarWrapper></>
+    
   );
 }

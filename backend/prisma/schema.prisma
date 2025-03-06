@@ -7,128 +7,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id                      Int                      @id @default(autoincrement())
-  email                   String                   @unique
-  role                    Role
-  availabilityStatus      AvailabilityStatus       @default(AVAILABLE)
-  batchTeachers           BatchTeacher[]
-  divisionTeachers        DivisionTeacher[]
-  examSeatingArrangements ExamSeatingArrangement?
-  examSessionTeachers     ExamSessionTeacher[]
-  examTeacherArrangements ExamTeacherArrangement[]
-  studentDivisions        StudentDivision[]
-  studentSemesters        StudentSemester[]
-  notifications           Notification[]  
-  institute               Institute[]
-}
-
-model Notification {
-   id          String   @id @default(uuid())
-  userId      Int      // 🔥 FIX: Changed from String @db.Uuid to match User.id
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  type        NotificationType
-  message     String
-  link        String?  // Optional link to redirect the user
-  read        Boolean  @default(false) // Whether the user has read it
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
-
-enum NotificationType {
-  SYSTEM    // General system notifications
-  EMAIL     // Email-based notifications
-  PUSH      // Push notifications for mobile
-  SMS       // SMS-based notifications
-  REMINDER  // Appointment or event reminders
-}
-
-
-model Institute {
-  id             Int        @id @default(autoincrement())
-  createdBy      Int     
-  access         Json[]     @default([])
-  noOfClassRooms Int
-  noOfStudents   Int
-  noOfTeachers   Int
-  noOfSemesters  Int
-  noOfBenches    Int
-  semesters      Semester[]
-  user        User                  @relation(fields: [createdBy], references: [id])
-  @@map("institutes")
-}
-
-model Semester {
-  id               Int               @id @default(autoincrement())
-  instituteId      Int 
-  name             String           
-  createdAt        DateTime          @default(now()) // Stores the date of creation
-  department       String            // Stores department name
-  access           String[]    
-  divisions        Division[]
-
-  studentSemesters StudentSemester[]
-  institute        Institute         @relation(fields: [instituteId], references: [id])
-  // chat         Chat?     @relation(fields: [id], references: [semesterId]) // One chat per semester
-
-  @@map("semesters")
-}
-
-
-
-model Division {
-  id               Int               @id @default(autoincrement())
-  semesterId       Int
-  name             String
-  batches          Batch[]
-  semester         Semester          @relation(fields: [semesterId], references: [id])
-  divisionSubjects DivisionSubject[]
-  divisionTeachers DivisionTeacher[]
-  studentDivisions StudentDivision[]
-
-  @@unique([semesterId, name])
-}
-
-model Subject {
-  id               Int               @id @default(autoincrement())
-  name             String            @unique
-  type             SubjectType
-  batchTeachers    BatchTeacher[]
-  divisionSubjects DivisionSubject[]
-  divisionTeachers DivisionTeacher[]
-}
-
-model DivisionSubject {
-  id         Int      @id @default(autoincrement())
-  divisionId Int
-  subjectId  Int
-  division   Division @relation(fields: [divisionId], references: [id])
-  subject    Subject  @relation(fields: [subjectId], references: [id])
-
-  @@unique([divisionId, subjectId])
-}
-
 model Batch {
-  id               Int               @id @default(autoincrement())
-  divisionId       Int
-  name             String
-  division         Division          @relation(fields: [divisionId], references: [id])
-  batchTeachers    BatchTeacher[]
-  studentDivisions StudentDivision[]
-}
-
-model DivisionTeacher {
-  id             Int                   @id @default(autoincrement())
-  divisionId     Int
-  subjectId      Int
-  teacherId      Int
-  assignmentType TeacherAssignmentType @default(THEORY)
-  division       Division              @relation(fields: [divisionId], references: [id])
-  subject        Subject               @relation(fields: [subjectId], references: [id])
-  teacher        User                  @relation(fields: [teacherId], references: [id])
-
-  @@unique([divisionId, subjectId])
+  id              Int               @id @default(autoincrement())
+  divisionId      Int
+  name            String
+  Division        Division          @relation(fields: [divisionId], references: [id])
+  BatchTeacher    BatchTeacher[]
+  StudentDivision StudentDivision[]
 }
 
 model BatchTeacher {
@@ -137,56 +22,82 @@ model BatchTeacher {
   subjectId      Int
   teacherId      Int
   assignmentType TeacherAssignmentType @default(PRACTICAL)
-  batch          Batch                 @relation(fields: [batchId], references: [id])
-  subject        Subject               @relation(fields: [subjectId], references: [id])
-  teacher        User                  @relation(fields: [teacherId], references: [id])
+  Batch          Batch                 @relation(fields: [batchId], references: [id])
+  Subject        Subject               @relation(fields: [subjectId], references: [id])
+  User           User                  @relation(fields: [teacherId], references: [id])
 
   @@unique([batchId, subjectId])
 }
 
-model StudentSemester {
-  id         Int                   @id @default(autoincrement())
-  studentId  Int
-  semesterId Int
-  status     StudentSemesterStatus @default(PENDING)
-  semester   Semester              @relation(fields: [semesterId], references: [id])
-  student    User                  @relation(fields: [studentId], references: [id])
-}
-
-model StudentDivision {
-  id         Int      @id @default(autoincrement())
-  studentId  Int
-  divisionId Int
-  batchId    Int?
-  batch      Batch?   @relation(fields: [batchId], references: [id])
-  division   Division @relation(fields: [divisionId], references: [id])
-  student    User     @relation(fields: [studentId], references: [id])
-}
-
-
-
-/// Classroom model
-model Classroom {
-  id           Int           @id @default(autoincrement())
-  name         String        @unique
-  floor        Int
-  capacity     Int
-  benches      Bench[]
-  examSessions ExamSession[]
-}
-
 model Bench {
-  id                      Int                      @id @default(autoincrement())
-  classroomId             Int
-  label                   String
-  maxSeats                Int
-  occupiedSeats           Int                      @default(0)
-  posX                    Int
-  posY                    Int
-  classroom               Classroom                @relation(fields: [classroomId], references: [id])
-  examSeatingArrangements ExamSeatingArrangement[]
+  id                     Int                      @id @default(autoincrement())
+  classroomId            Int
+  label                  String
+  maxSeats               Int
+  occupiedSeats          Int                      @default(0)
+  posX                   Int
+  posY                   Int
+  Classroom              Classroom                @relation(fields: [classroomId], references: [id])
+  ExamSeatingArrangement ExamSeatingArrangement[]
 
   @@unique([classroomId, label])
+}
+
+model Classroom {
+  id          Int           @id @default(autoincrement())
+  name        String        @unique
+  floor       Int
+  capacity    Int
+  instituteId Int
+  Bench       Bench[]
+  institutes  institutes    @relation(fields: [instituteId], references: [id])
+  ExamSession ExamSession[]
+}
+
+model Division {
+  id              Int               @id @default(autoincrement())
+  semesterId      Int
+  name            String
+  Batch           Batch[]
+  semesters       semesters         @relation(fields: [semesterId], references: [id])
+  DivisionSubject DivisionSubject[]
+  DivisionTeacher DivisionTeacher[]
+  StudentDivision StudentDivision[]
+  text_tables     text_tables?
+}
+
+model DivisionSubject {
+  id         Int      @id @default(autoincrement())
+  divisionId Int
+  subjectId  Int
+  Division   Division @relation(fields: [divisionId], references: [id])
+  Subject    Subject  @relation(fields: [subjectId], references: [id])
+
+  @@unique([divisionId, subjectId])
+}
+
+model DivisionTeacher {
+  id             Int                   @id @default(autoincrement())
+  divisionId     Int
+  subjectId      Int
+  teacherId      Int
+  assignmentType TeacherAssignmentType @default(THEORY)
+  Division       Division              @relation(fields: [divisionId], references: [id])
+  Subject        Subject               @relation(fields: [subjectId], references: [id])
+  User           User                  @relation(fields: [teacherId], references: [id])
+
+  @@unique([divisionId, subjectId])
+}
+
+model Exam {
+  id          Int           @id @default(autoincrement())
+  name        String
+  examDate    DateTime
+  description String?
+  createdAt   DateTime      @default(now())
+  instituteId Int
+  institutes  institutes    @relation(fields: [instituteId], references: [id])
+  ExamSession ExamSession[]
 }
 
 model ExamSeatingArrangement {
@@ -197,34 +108,25 @@ model ExamSeatingArrangement {
   studentId     Int               @unique
   status        ArrangementStatus @default(DRAFT)
   assignedAt    DateTime          @default(now())
-  bench         Bench             @relation(fields: [benchId], references: [id])
-  examSession   ExamSession       @relation(fields: [examSessionId], references: [id])
-  student       User              @relation(fields: [studentId], references: [id])
+  Bench         Bench             @relation(fields: [benchId], references: [id])
+  ExamSession   ExamSession       @relation(fields: [examSessionId], references: [id])
+  User          User              @relation(fields: [studentId], references: [id])
 
   @@unique([benchId, seatNumber])
 }
 
-model Exam {
-  id           Int           @id @default(autoincrement())
-  name         String
-  examDate     DateTime
-  description  String?
-  createdAt    DateTime      @default(now())
-  examSessions ExamSession[]
-}
-
 model ExamSession {
-  id                      Int                      @id @default(autoincrement())
-  examId                  Int
-  classroomId             Int
-  sessionStart            DateTime
-  sessionEnd              DateTime
-  description             String?
-  examSeatingArrangements ExamSeatingArrangement[]
-  classroom               Classroom                @relation(fields: [classroomId], references: [id])
-  exam                    Exam                     @relation(fields: [examId], references: [id])
-  examSessionTeachers     ExamSessionTeacher[]
-  examTeacherArrangements ExamTeacherArrangement[]
+  id                     Int                      @id @default(autoincrement())
+  examId                 Int
+  classroomId            Int
+  sessionStart           DateTime
+  sessionEnd             DateTime
+  description            String?
+  ExamSeatingArrangement ExamSeatingArrangement[]
+  Classroom              Classroom                @relation(fields: [classroomId], references: [id])
+  Exam                   Exam                     @relation(fields: [examId], references: [id])
+  ExamSessionTeacher     ExamSessionTeacher[]
+  ExamTeacherArrangement ExamTeacherArrangement[]
 }
 
 model ExamSessionTeacher {
@@ -232,8 +134,8 @@ model ExamSessionTeacher {
   examSessionId Int
   teacherId     Int
   role          TeacherExamRole @default(INVIGILATOR)
-  examSession   ExamSession     @relation(fields: [examSessionId], references: [id])
-  teacher       User            @relation(fields: [teacherId], references: [id])
+  ExamSession   ExamSession     @relation(fields: [examSessionId], references: [id])
+  User          User            @relation(fields: [teacherId], references: [id])
 
   @@unique([examSessionId, teacherId])
 }
@@ -246,16 +148,160 @@ model ExamTeacherArrangement {
   posY          Int
   status        ArrangementStatus @default(DRAFT)
   assignedAt    DateTime          @default(now())
-  examSession   ExamSession       @relation(fields: [examSessionId], references: [id])
-  teacher       User              @relation(fields: [teacherId], references: [id])
+  ExamSession   ExamSession       @relation(fields: [examSessionId], references: [id])
+  User          User              @relation(fields: [teacherId], references: [id])
 
   @@unique([examSessionId, teacherId])
 }
 
-model Demo {
-  id Int @id @default(autoincrement())
+model Notification {
+  id        String           @id
+  userId    Int
+  type      NotificationType
+  message   String
+  link      String?
+  read      Boolean          @default(false)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime
+  User      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
 
-  @@map("demo")
+model StudentDivision {
+  id         Int      @id @default(autoincrement())
+  studentId  Int
+  divisionId Int
+  batchId    Int?
+  Batch      Batch?   @relation(fields: [batchId], references: [id])
+  Division   Division @relation(fields: [divisionId], references: [id])
+  User       User     @relation(fields: [studentId], references: [id])
+}
+
+model StudentSemester {
+  id         Int                   @id @default(autoincrement())
+  studentId  Int
+  semesterId Int
+  status     StudentSemesterStatus @default(PENDING)
+  semesters  semesters             @relation(fields: [semesterId], references: [id])
+  User       User                  @relation(fields: [studentId], references: [id])
+}
+
+model Subject {
+  id              Int               @id @default(autoincrement())
+  name            String            @unique
+  type            SubjectType
+  BatchTeacher    BatchTeacher[]
+  DivisionSubject DivisionSubject[]
+  DivisionTeacher DivisionTeacher[]
+  TestMarks       TestMarks[]
+}
+
+model TestMarks {
+  id          Int         @id @default(autoincrement())
+  studentId   Int
+  subjectId   Int
+  testId      Int
+  obtained    Float
+  total       Float
+  createdAt   DateTime    @default(now())
+  User        User        @relation(fields: [studentId], references: [id])
+  Subject     Subject     @relation(fields: [subjectId], references: [id])
+  text_tables text_tables @relation(fields: [testId], references: [id])
+
+  @@unique([studentId, subjectId, testId])
+}
+
+model User {
+  id                     Int                      @id @default(autoincrement())
+  email                  String                   @unique
+  role                   Role
+  availabilityStatus     AvailabilityStatus       @default(AVAILABLE)
+  BatchTeacher           BatchTeacher[]
+  DivisionTeacher        DivisionTeacher[]
+  ExamSeatingArrangement ExamSeatingArrangement?
+  ExamSessionTeacher     ExamSessionTeacher[]
+  ExamTeacherArrangement ExamTeacherArrangement[]
+  Notification           Notification[]
+  StudentDivision        StudentDivision[]
+  StudentSemester        StudentSemester[]
+  TestMarks              TestMarks[]
+  institutes             institutes[]
+  messages               messages[]
+}
+
+model chats {
+  id         Int        @id @default(autoincrement())
+  semesterId Int        @unique
+  semesters  semesters  @relation(fields: [semesterId], references: [id])
+  messages   messages[]
+}
+
+model demo {
+  id Int @id @default(autoincrement())
+}
+
+model institutes {
+  id             Int         @id @default(autoincrement())
+  createdBy      Int
+  access         Json[]      @default([])
+  noOfClassRooms Int
+  noOfStudents   Int
+  noOfTeachers   Int
+  noOfSemesters  Int
+  noOfBenches    Int
+  Classroom      Classroom[]
+  Exam           Exam[]
+  User           User        @relation(fields: [createdBy], references: [id])
+  semesters      semesters[]
+}
+
+model messages {
+  id        Int      @id @default(autoincrement())
+  chatId    Int
+  senderId  Int
+  content   String
+  createdAt DateTime @default(now())
+  chats     chats    @relation(fields: [chatId], references: [id])
+  User      User     @relation(fields: [senderId], references: [id])
+}
+
+model semesters {
+  id              Int               @id @default(autoincrement())
+  instituteId     Int
+  name            String
+  createdAt       DateTime          @default(now())
+  department      String
+  access          String[]
+  Division        Division[]
+  StudentSemester StudentSemester[]
+  chats           chats?
+  institutes      institutes        @relation(fields: [instituteId], references: [id])
+}
+
+model text_tables {
+  id         Int         @id @default(autoincrement())
+  divisionId Int         @unique
+  testscore  String
+  updatedAt  DateTime
+  TestMarks  TestMarks[]
+  Division   Division    @relation(fields: [divisionId], references: [id])
+}
+
+enum ArrangementStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum AvailabilityStatus {
+  AVAILABLE
+  UNAVAILABLE
+}
+
+enum NotificationType {
+  SYSTEM
+  EMAIL
+  PUSH
+  SMS
+  REMINDER
 }
 
 enum Role {
@@ -264,9 +310,9 @@ enum Role {
   STUDENT
 }
 
-enum AvailabilityStatus {
-  AVAILABLE
-  UNAVAILABLE
+enum StudentSemesterStatus {
+  PENDING
+  APPROVED
 }
 
 enum SubjectType {
@@ -278,16 +324,6 @@ enum SubjectType {
 enum TeacherAssignmentType {
   THEORY
   PRACTICAL
-}
-
-enum StudentSemesterStatus {
-  PENDING
-  APPROVED
-}
-
-enum ArrangementStatus {
-  DRAFT
-  PUBLISHED
 }
 
 enum TeacherExamRole {

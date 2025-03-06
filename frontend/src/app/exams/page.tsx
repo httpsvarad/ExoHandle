@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { Calendar } from "lucide-react";
-
+import Sidebar from "@/components/sidebar";
+import SidebarWrapper from "../sidebarWrapper";
 const exams = [
   { name: "CS101 - Introduction to Computer Science", date: "June 10, 2023" },
   { name: "CS101 - Introduction to Computer Science", date: "June 12, 2023" },
@@ -15,7 +16,8 @@ const exams = [
 ];
 export default function ExamsPage() {
   return (
-    <div className="p-6 h-full">
+    <SidebarWrapper>
+      <div className="p-6 h-full">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-[#2c275d]">Exams</h1>
         <Link href="/exams/new">
@@ -52,5 +54,7 @@ export default function ExamsPage() {
         </div>
       </div>
     </div>
+    </SidebarWrapper>
+    
   );
 }

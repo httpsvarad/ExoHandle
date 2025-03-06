@@ -122,7 +122,8 @@ exports.createBatches = async (req, res) => {
         data: classrooms.map((classroom) => ({
           name: classroom.name,
           floor: classroom.floor,
-          capacity: classroom.capacity
+          capacity: classroom.capacity,
+          instituteId:classroom.instituteId
         })),
       });
   
@@ -133,5 +134,79 @@ exports.createBatches = async (req, res) => {
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Error creating classrooms." });
+    }
+  };
+
+  exports.setupDummySubjects = async (req, res) => {
+    try {
+      const dummySubjects = [
+        { name: "Engineering Mathematics", type: "BOTH" },
+        { name: "Engineering Physics", type: "BOTH" },
+        { name: "Engineering Chemistry", type: "THEORY" },
+        { name: "Electrical Circuits", type: "BOTH" },
+        { name: "Computer Programming", type: "BOTH" },
+        { name: "Data Structures & Algorithms", type: "BOTH" },
+        { name: "Digital Electronics", type: "BOTH" },
+        { name: "Mechanical Engineering Basics", type: "THEORY" },
+        { name: "Thermodynamics", type: "THEORY" },
+        { name: "Control Systems", type: "BOTH" },
+        { name: "Microprocessors & Microcontrollers", type: "BOTH" },
+        { name: "Communication Systems", type: "BOTH" },
+        { name: "Software Engineering", type: "THEORY" },
+        { name: "Operating Systems", type: "BOTH" },
+        { name: "Database Management Systems", type: "BOTH" },
+        { name: "Artificial Intelligence", type: "THEORY" },
+        { name: "Machine Learning", type: "BOTH" },
+        { name: "Computer Networks", type: "BOTH" },
+        { name: "Embedded Systems", type: "BOTH" },
+        { name: "Cybersecurity", type: "THEORY" }
+      ];
+      
+  
+      const subjects = await prisma.subject.createMany({
+        data: dummySubjects,
+        skipDuplicates: true, // Prevent duplicate insertion
+      });
+  
+      res.status(201).json({ message: "Dummy subjects added successfully", subjects });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Error setting up dummy subjects" });
+    }
+  };
+
+  const dummyExams = [
+    { 
+      name: "Mid-Term Exam", 
+      examDate: new Date("2024-04-15T09:00:00.000Z"), 
+      description: "Mid-semester assessment for engineering subjects",
+      instituteId: 14 
+    },
+    { 
+      name: "End-Term Exam", 
+      examDate: new Date("2024-06-20T10:00:00.000Z"), 
+      description: "Final exam covering all syllabus",
+      instituteId: 14 
+    },
+    { 
+      name: "Practical Exam", 
+      examDate: new Date("2024-05-05T11:30:00.000Z"), 
+      description: "Lab practicals assessment",
+      instituteId: 14
+    }
+  ];
+  
+  exports.setupDummyExams = async (req, res) => {
+    try {
+      // Insert dummy exam data
+      const exams = await prisma.exam.createMany({
+        data: dummyExams,
+        skipDuplicates: true, // Avoid duplicate inserts
+      });
+  
+      res.status(201).json({ message: "Dummy exams added successfully", exams });
+    } catch (error) {
+      console.error("Error setting up dummy exams:", error);
+      res.status(500).json({ error: "Failed to insert dummy exams" });
     }
   };

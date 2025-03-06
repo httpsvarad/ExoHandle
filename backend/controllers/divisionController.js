@@ -36,10 +36,10 @@ async function getDivisionById(req, res) {
 
 // Create a new division
 async function createDivision(req, res) {
-  const { semesterId, name } = req.body;
+  const { semesterId, name ,instituteId} = req.body;
   try {
     const newDivision = await prisma.division.create({
-      data: { semesterId, name },
+      data: { semesterId, name ,instituteId},
     });
     res.status(201).json(newDivision);
   } catch (error) {

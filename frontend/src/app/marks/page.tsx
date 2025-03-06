@@ -2,12 +2,13 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-
+import SidebarWrapper from "../sidebarWrapper";
 const MarksEntry = () => {
   const router = useRouter();
 
   return (
-    <div className="flex flex-col items-center min-h-screen bg-white px-6 py-8 ">
+    <SidebarWrapper>
+      <div className="flex flex-col items-center min-h-screen bg-white px-6 py-8 ">
       {/* Header Section */}
       <div className="w-full max-w-3xl flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-[#2c275d]">
@@ -93,6 +94,8 @@ const MarksEntry = () => {
         </button>
       </div>
     </div>
+    </SidebarWrapper>
+    
   );
 };
 

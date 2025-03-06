@@ -4,9 +4,9 @@ const prisma = new PrismaClient();
 // ✅ Create Exam
 exports.createExam = async (req, res) => {
   try {
-    const { name, examDate, description } = req.body;
+    const { name, examDate, description ,instituteId } = req.body;
     const newExam = await prisma.exam.create({
-      data: { name, examDate: new Date(examDate), description },
+      data: { name, examDate: new Date(examDate), description,instituteId },
     });
     res.status(201).json(newExam);
   } catch (error) {
@@ -26,12 +26,26 @@ exports.getAllExams = async (req, res) => {
   }
 };
 
-// ✅ Get Exam by ID
 exports.getExamById = async (req, res) => {
   try {
     const { id } = req.params;
-    const exam = await prisma.exam.findUnique({
+    const exam = await prisma.exam.findMany({
       where: { id: parseInt(id) },
+      include: { examSessions: true },
+    });
+    if (!exam) return res.status(404).json({ error: "Exam not found" });
+    res.status(200).json(exam);
+  } catch (error) {
+    console.error("Error fetching exam:", error);
+    res.status(500).json({ error: "Failed to fetch exam" });
+  }
+};
+// ✅ Get Exam by ID
+exports.getExamByInstituteId = async (req, res) => {
+  try {
+    const { instituteId } = req.params;
+    const exam = await prisma.exam.findMany({
+      where: { instituteId: parseInt(instituteId) },
       include: { examSessions: true },
     });
     if (!exam) return res.status(404).json({ error: "Exam not found" });

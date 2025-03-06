@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-
+import SidebarWrapper from "../sidebarWrapper";
 const ManageBatches = () => {
   const router = useRouter();
 
@@ -52,7 +52,8 @@ const ManageBatches = () => {
   ];
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <SidebarWrapper>
+      <div className="flex min-h-screen bg-gray-50">
       {/* Main Content */}
       <div className="flex-1 px-10 py-8">
         <h1 className="text-3xl font-semibold text-[#2c275d]">Batches</h1>
@@ -111,6 +112,8 @@ const ManageBatches = () => {
         </div>
       </div>
     </div>
+    </SidebarWrapper>
+    
   );
 };
 
