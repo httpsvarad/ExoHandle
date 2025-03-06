@@ -14,6 +14,11 @@ const Sidebar = () => {
     { name: "Students", href: "/students", icon: <FiUsers /> },
     { name: "Manage Batches", href: "/manage-batch", icon: <FiLayers /> },
     { name: "Exams", href: "/exams", icon: <FiBook /> },
+    {
+      name: "Seating Arrangement",
+      href: "/seating-arrangement",
+      icon: <FiBook />,
+    },
     { name: "Marks", href: "/marks", icon: <FiBriefcase /> },
     { name: "Chat With Teachers", href: "/chatDashboard", icon: <FaMessage /> },
   ];
