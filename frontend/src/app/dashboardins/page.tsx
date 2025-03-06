@@ -44,9 +44,9 @@ const Page = () => {
     },
   ];
 
-  return (
+  return (<>
+  <SidebarWrapper>
     <div  className=" w-full h-full">
-    <SidebarWrapper>
     <div className="h-full w-full flex flex-col px-[10vw] py-10 ">
       <h2 className="text-5xl text-[#2c275d] font-bold">Dashboard</h2>
       <h4 className="text-[#2c275d] text-lg mt-2">Quick Links</h4>
@@ -66,8 +66,9 @@ const Page = () => {
         ))}
       </div>
     </div>
-    </SidebarWrapper>
     </div>
+    </SidebarWrapper> 
+   </>
     
   );
 };
