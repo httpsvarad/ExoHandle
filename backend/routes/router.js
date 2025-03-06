@@ -19,6 +19,7 @@ const setupRoutes = require('./setupRouter')
 const classroomRoutes = require('./classroomRoutes')
 const DivAssign = require('./divisionNeeds')
 const TestRoutes =require('./textAll')
+const firewallRoutes = require("./firewallRoutes");
 //setup test routes
 
 router.post('/auth',login)
@@ -29,6 +30,8 @@ router.use('/division',devisionRoutes)
 //router to assign subjects ,teachers, students to division
 router.use('/divassgin',DivAssign)
 
+//firewall routes
+router.use("/firewall", firewallRoutes);
 
 //testroutes
 router.use('/test',TestRoutes)

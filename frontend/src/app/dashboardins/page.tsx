@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { SlCalender } from "react-icons/sl";
 import { IoMdCheckmark } from "react-icons/io";
@@ -8,6 +8,12 @@ import { BsPeople } from "react-icons/bs";
 import { PiExamLight } from "react-icons/pi";
 import { GrScorecard } from "react-icons/gr";
 import SidebarWrapper from "../sidebarWrapper";
+import axios from 'axios';
+import { Await } from "react-router-dom";
+
+// Function to get the user's public IP address
+
+
 const Page = () => {
   const router = useRouter();
 
@@ -43,6 +49,37 @@ const Page = () => {
       route: "/analysis",
     },
   ];
+
+  useEffect(()=>{
+    const getPublicIP = async () => {
+      try {
+          const response = await axios.get("https://api64.ipify.org?format=json");
+          console.log(response.data.ip)
+          return response.data.ip;
+      } catch (error) {
+          console.error("Failed to fetch IP", error);
+          return null;
+      }
+  };
+
+  const callProtectedAPI = async () => {
+    const userIP = await getPublicIP();
+    if (!userIP) return;
+    console.log(userIP)
+     const res = await axios.get("http://localhost:8000")
+     console.log(res)
+    // axios.get("http://localhost:8000/protect", {
+    //     headers: {
+    //         "x-client-ip": userIP,
+    //     },
+    // })
+    // .then(response => console.log("Response:", response.data))
+    // .catch(error => console.error("Access Denied", error));
+   
+};
+
+callProtectedAPI()
+  },[])
 
   return (<>
   <SidebarWrapper>
