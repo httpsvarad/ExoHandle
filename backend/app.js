@@ -3,8 +3,16 @@ const router = require("./routes/router");
 const app = express();
 const cookieParser = require("cookie-parser");
 const { config } = require("dotenv");
+const cors = require("cors");
 config();
 
+// CORS configuration
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-client-ip']
+}));
  
 //To access the data user inputs in form.
 app.use(express.urlencoded({ extended: false }));
@@ -14,10 +22,6 @@ app.use(express.json());
 //(aoi routw wont use any of tye session data etc. etc. written below)
 app.use(cookieParser());
 app.use(express.static("public"));
-
-
-// app.use(cors());
-
 
 
 

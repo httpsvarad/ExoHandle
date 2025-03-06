@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 // Get all semesters (optionally include related institute details)
 async function getAllSemesters(req, res) {
   try {
-    
+    console.log("HITT")
     const semesters = await prisma.semester.findMany({
       include: { institute: true },
     });

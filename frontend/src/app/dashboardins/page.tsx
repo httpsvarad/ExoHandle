@@ -9,13 +9,13 @@ import { PiExamLight } from "react-icons/pi";
 import { GrScorecard } from "react-icons/gr";
 import SidebarWrapper from "../sidebarWrapper";
 import axios from 'axios';
-import { Await } from "react-router-dom";
+import { useState } from "react";
 
-// Function to get the user's public IP address
 
 
 const Page = () => {
   const router = useRouter();
+  const [unauthorized, setUnauthorized] = useState(false)
 
   const cardData = [
     {
@@ -63,23 +63,36 @@ const Page = () => {
   };
 
   const callProtectedAPI = async () => {
-    const userIP = await getPublicIP();
-    if (!userIP) return;
-    console.log(userIP)
-     const res = await axios.get("http://localhost:8000")
-     console.log(res)
-    // axios.get("http://localhost:8000/protect", {
-    //     headers: {
-    //         "x-client-ip": userIP,
-    //     },
-    // })
-    // .then(response => console.log("Response:", response.data))
-    // .catch(error => console.error("Access Denied", error));
-   
-};
+    try {
+      const userIP = await getPublicIP();
+      if (!userIP) return;
+      console.log(userIP)
+      
+      await axios.get("http://localhost:8000/firewall/firewall-check", {
+          headers: {
+              "x-client-ip": userIP,
+          },
+      });
+      
+      // If we get here, the request was successful
+      setUnauthorized(false);
+    }
+    catch(error) {
+      if (axios.isAxiosError(error) && error.response?.status === 403) {
+        setUnauthorized(true);
+      } else {
+        console.error("Error checking firewall:", error);
+        // Optionally handle other types of errors
+      }
+    } 
+  };
 
 callProtectedAPI()
   },[])
+
+  if (unauthorized){
+    return <p>IP Address is unauthorized</p>
+  }
 
   return (<>
   <SidebarWrapper>

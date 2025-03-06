@@ -21,6 +21,7 @@ const DivAssign = require('./divisionNeeds')
 const grpchat = require('./groupChatRouter')
 const TestRoutes =require('./textAll')
 const firewallRoutes = require("./firewallRoutes");
+const notificationRoutes = require("./notificationRouter");
 //setup test routes
 
 router.post('/auth',login)
@@ -51,6 +52,7 @@ router.use('/examteacherarrangement', examTeacherArrangement)
 router.use('/setup', setupRoutes)
 router.use('/classroom', classroomRoutes)
 router.use('/grpchat', grpchat)
+router.use('/notification', notificationRoutes)
 
 router.get('/', (req,res)=> {
   res.send("HELLO WORLD!")
