@@ -14,6 +14,7 @@ model Batch {
   Division        Division          @relation(fields: [divisionId], references: [id])
   BatchTeacher    BatchTeacher[]
   StudentDivision StudentDivision[]
+  PracticalSession PracticalSession[] // ✅ One batch can have multiple practical sessions
 }
 
 model BatchTeacher {
@@ -25,8 +26,38 @@ model BatchTeacher {
   Batch          Batch                 @relation(fields: [batchId], references: [id])
   Subject        Subject               @relation(fields: [subjectId], references: [id])
   User           User                  @relation(fields: [teacherId], references: [id])
+ // PracticalSession PracticalSession[] // ✅ One teacher can conduct multiple practical sessions
 
   @@unique([batchId, subjectId])
+}
+
+model PracticalSession {
+  id          Int       @id @default(autoincrement())
+  batchId     Int
+  subjectId   Int
+  teacherId   Int
+  topic       String   // ✅ Topic of the practical session
+  date        DateTime // ✅ Date of the practical session
+  marksFrom   Int      // ✅ Total marks possible for the session
+  Batch       Batch    @relation(fields: [batchId], references: [id])
+  Subject     Subject  @relation(fields: [subjectId], references: [id])
+  User        User     @relation(fields: [teacherId], references: [id])
+  PracticalAttendance PracticalAttendance[] // ✅ Attendance & submission tracking
+
+  @@unique([batchId, subjectId, date]) // Ensures one session per batch, subject, and date
+}
+
+model PracticalAttendance {
+  id               Int  @id @default(autoincrement())
+  sessionId        Int  // ✅ Reference to PracticalSession
+  studentId        Int  // ✅ Reference to Student
+  attendanceStatus Int  // ✅ 0 = Absent, 1 = Present
+  submissionStatus Int  // ✅ 0 = Not submitted, 1 = Submitted
+  marks            Int  // ✅ Marks awarded for the session
+  PracticalSession PracticalSession @relation(fields: [sessionId], references: [id])
+  Student          User         @relation(fields: [studentId], references: [id])
+
+  @@unique([sessionId, studentId]) // Ensures one record per student per session
 }
 
 model Bench {
@@ -107,8 +138,8 @@ model ExamSeatingArrangement {
   seatNumber    Int
   studentId     Int               @unique
   status        ArrangementStatus @default(DRAFT)
-  attendance    Int               @default(0)
   assignedAt    DateTime          @default(now())
+  attendance    Int               @default(0)
   Bench         Bench             @relation(fields: [benchId], references: [id])
   ExamSession   ExamSession       @relation(fields: [examSessionId], references: [id])
   User          User              @relation(fields: [studentId], references: [id])
@@ -195,6 +226,7 @@ model Subject {
   DivisionSubject DivisionSubject[]
   DivisionTeacher DivisionTeacher[]
   TestMarks       TestMarks[]
+  PracticalSession  PracticalSession[]
 }
 
 model TestMarks {
@@ -227,41 +259,18 @@ model User {
   StudentSemester        StudentSemester[]
   TestMarks              TestMarks[]
   institutes             institutes[]
-  messages               Message[]
-  groupChats             GroupChatUser[]  
-  createdGroupChats      GroupChat[] @relation("CreatedGroupChats") // ✅ Add this line
-  semester               Int?
+  messages               messages[]
+  practicalAttendances   PracticalAttendance[] 
+  practicalSessions      PracticalSession[]
+
 }
 
-model GroupChat {
-  id         Int       @id @default(autoincrement())
-  name       String
-  semester   Int
-  users      GroupChatUser[]  
-  messages   Message[]
-  createdBy  User      @relation("CreatedGroupChats", fields: [createdById], references: [id]) // ✅ Explicit relation
-  createdById Int
+model chats {
+  id         Int        @id @default(autoincrement())
+  semesterId Int        @unique
+  semesters  semesters  @relation(fields: [semesterId], references: [id])
+  messages   messages[]
 }
-
-model GroupChatUser {
-  userId     Int
-  groupChatId Int
-  user       User      @relation(fields: [userId], references: [id])
-  groupChat  GroupChat @relation(fields: [groupChatId], references: [id])
-
-  @@id([userId, groupChatId]) 
-}
-
-model Message {
-  id         Int      @id @default(autoincrement())
-  sender     User     @relation(fields: [senderId], references: [id])
-  senderId   Int
-  groupChat  GroupChat @relation(fields: [groupChatId], references: [id])
-  groupChatId Int
-  content    String
-  createdAt  DateTime @default(now())
-}
-
 
 model demo {
   id Int @id @default(autoincrement())
@@ -282,6 +291,15 @@ model institutes {
   semesters      semesters[]
 }
 
+model messages {
+  id        Int      @id @default(autoincrement())
+  chatId    Int
+  senderId  Int
+  content   String
+  createdAt DateTime @default(now())
+  chats     chats    @relation(fields: [chatId], references: [id])
+  User      User     @relation(fields: [senderId], references: [id])
+}
 
 model semesters {
   id              Int               @id @default(autoincrement())
@@ -292,7 +310,7 @@ model semesters {
   access          String[]
   Division        Division[]
   StudentSemester StudentSemester[]
-  
+  chats           chats?
   institutes      institutes        @relation(fields: [instituteId], references: [id])
 }
 

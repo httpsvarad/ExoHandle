@@ -76,6 +76,9 @@ async function deleteDivision(req, res) {
   }
 }
 
+
+
+
 module.exports = {
   getAllDivisions,
   getDivisionById,
