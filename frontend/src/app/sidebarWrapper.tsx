@@ -11,7 +11,13 @@ export default function SidebarWrapper({
   const pathname = usePathname();
 
   // Hide sidebar on specific routes
-  const showSidebar = !["/", "/auth", "/dashboardins"].includes(pathname);
+  const showSidebar = !(
+    pathname === "/" ||
+    pathname.startsWith("/auth") ||
+    pathname.startsWith("/dashboardins") ||
+    pathname.startsWith("/teacher") ||
+    pathname.startsWith("/student")
+  );
 
   return (
     <div className="flex h-screen w-screen overflow-hidden">
