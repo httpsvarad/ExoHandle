@@ -4,6 +4,8 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation"; // ✅ Correct imports
 import { FiHome, FiUsers, FiLayers, FiBook, FiBriefcase } from "react-icons/fi";
 import { FaMessage } from "react-icons/fa6";
+import { FiClipboard, FiGrid } from "react-icons/fi";
+import { MdEventSeat } from "react-icons/md";
 
 const Sidebar = () => {
   const pathname = usePathname();
@@ -11,13 +13,14 @@ const Sidebar = () => {
 
   const navItems = [
     { name: "Dashboard", href: "/dashboardins", icon: <FiHome /> },
+    { name: "Semester", href: "/semester", icon: <FiClipboard /> },
     { name: "Students", href: "/students", icon: <FiUsers /> },
     { name: "Manage Batches", href: "/manage-batch", icon: <FiLayers /> },
     { name: "Exams", href: "/exams", icon: <FiBook /> },
     {
       name: "Seating Arrangement",
-      href: "/seating-arrangement",
-      icon: <FiBook />,
+      href: "seating-arrangement",
+      icon: <MdEventSeat />,
     },
     { name: "Marks", href: "/marks", icon: <FiBriefcase /> },
     { name: "Chat With Teachers", href: "/chatDashboard", icon: <FaMessage /> },
