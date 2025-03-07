@@ -10,6 +10,10 @@ router.post("/", protectRoute, groupChatController.createGroupChat);
 router.post("/send", protectRoute, groupChatController.sendMessageToGroup);
 
 // Get messages from a group chat
+router.get("/allgrp", protectRoute, groupChatController.getAllGroupChats);
+
+// Get messages from a group chat
 router.get("/:groupChatId", protectRoute, groupChatController.getGroupConversation);
+
 
 module.exports = router;

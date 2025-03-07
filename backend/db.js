@@ -11,8 +11,8 @@ async function start() {
     console.log("Connected to Neon PostgreSQL using Prisma");
 
     // Import and start your Express app
-    const app = require("./app");
-    app.listen(process.env.PORT, () => {
+    const {app, server} = require("./app");
+    server.listen(process.env.PORT, () => {
       console.log("Server listening on port " + process.env.PORT);
     });
   } catch (e) {

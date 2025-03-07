@@ -50,9 +50,11 @@ const Loginf = () => {
   const handleVerifyOtp = async () => {
     setLoading(true);
     if (otp == serverOtp) {
-      const response = await axios.post(`http://localhost:8000/auth`, {
-        email,
-      });
+      const response = await axios.post(
+        "http://localhost:8000/auth",
+        { email }, // Data object (payload)
+        { withCredentials: true } // Configuration object
+      );
       if (response.status === 200 || response.status === 201) {
         const userId = response.data.result._id;
         localStorage.setItem("userId", userId);

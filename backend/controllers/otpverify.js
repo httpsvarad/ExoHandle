@@ -35,7 +35,7 @@ exports.sendOtp = async (req, res) => {
   });
 };
 
-// for extention to create as well
+
 
 
 

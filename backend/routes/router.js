@@ -6,7 +6,7 @@ const semisterRoutes = require('./semisterRouter');
 const devisionRoutes = require('./divisionRouter');
 const classrooms = require('../controllers/classrooms');
 const benches = require('./benches');
-const {login} = require('../controllers/UserAuthController');
+const {login, checkauth} = require('../controllers/UserAuthController');
 const exam = require('./examRouter');
 const {sendOtp} = require('../controllers/otpverify');
 const subject = require('./subjectRouter');
@@ -22,6 +22,7 @@ const grpchat = require('./groupChatRouter')
 const TestRoutes =require('./textAll')
 const firewallRoutes = require("./firewallRoutes");
 const notificationRoutes = require("./notificationRouter");
+const protectRoute = require("../middleware/auth.middleware");
 //setup test routes
 
 router.post('/auth',login)
@@ -38,6 +39,9 @@ router.use("/firewall", firewallRoutes);
 //testroutes
 router.use('/test',TestRoutes)
 // router.post("/assign-seating", assignSeating);
+
+router.get('/auth/me',protectRoute, checkauth)
+
 router.use('/user', userController)
 router.use('/institute',instituteRoutes)
 router.use('/semister',semisterRoutes)

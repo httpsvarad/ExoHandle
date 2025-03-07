@@ -179,3 +179,20 @@ exports.getGroupConversation = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+
+exports.getAllGroupChats = async (req, res) => {
+  try {
+    const groupChats = await prisma.groupChat.findMany({
+      include: {
+        users: true, // Include users in the group
+        createdBy: true, // Include the creator details
+      },
+    });
+
+    res.status(200).json({ success: true, groupChats });
+  } catch (error) {
+    console.error("Error fetching group chats:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
