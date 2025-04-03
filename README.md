@@ -4,13 +4,13 @@ Exo Handle is a web-based platform designed to simplify and automate university 
 
 ## 🚀 **Overview**  
 Exo Handle is a web-based platform designed to streamline examination activities, including:  
-- **Seating arrangements** 🏫  
-- **Supervisor assignments** 👨‍🏫  
-- **Semester marks calculation** 📊  
-- **Results management** 🎓  
-- **Administrative dashboard** 📌  
-- **Group chat for coordination** 💬  
-- **AI-powered prerequisite test generator** 🤖  
+- **Seating arrangements** 
+- **Supervisor assignments** 
+- **Semester marks calculation** 
+- **Results management** 
+- **Administrative dashboard** 
+- **Group chat for coordination** 
+- **AI-powered prerequisite test generator** 
 
 ## 🛠 **Tech Stack**  
 - **Frontend**: React.js, Tailwind CSS  
